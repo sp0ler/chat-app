@@ -1,14 +1,20 @@
-name: Verify type labels
+name: Release checks
 
 on:
   pull_request:
-    types: [opened, labeled, unlabeled, synchronize]
-      
+    branches:
+    - master
+    types:
+    - opened
+    - labeled
+    - unlabeled
 
 jobs:
-  triage:
+  includes_version_bump:
+    name: Labels
     runs-on: ubuntu-latest
     steps:
-      - uses: zwaldowski/match-label-action@v5
-        with:
-          allowed: 'type:bug, type:feature, type:documentation, type:config'
+    - name: Check PR labels
+      uses: zwaldowski/match-label-action@v4
+      with:
+        allowed: bug, feature, documentation, config
