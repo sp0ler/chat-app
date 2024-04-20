@@ -1,0 +1,27 @@
+openapi: "3.0.0"
+
+info:
+  version: 1.0.0
+  title: Simple API overview
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /test:
+    get:
+      summary: test
+      operationId: testApi
+      tags:
+        - test
+      parameters:
+          - name: limit
+            in: query
+            required: true
+            schema:
+              type: integer
+              maximum: 100
+              format: int32
+      responses:
+        '200':
+          description: ok
