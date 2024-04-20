@@ -5,6 +5,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.4"
 	id("org.springdoc.openapi-gradle-plugin") version "1.8.0"
 	id("org.openapi.generator") version "7.5.0"
+	id("org.sonarqube") version "5.0.0.4638"
 }
 
 group = "ru.deevdenis"
