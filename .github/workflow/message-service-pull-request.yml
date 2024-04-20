@@ -1,4 +1,15 @@
-name: {{ROUTE}}
+name: message-service
+
+on:
+  pull_request:
+    paths:
+      - 'message-service/**'
+      - '*.yaml'
+      - .github/workflows/message-service-pull-request.yaml
+  push:
+    branches:
+      - 'master'
+      
 
 jobs:
   build:
@@ -10,17 +21,12 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          server-id: github
-          settings-path: ${{ github.workspace }}
-
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
       - name: Build
-        run: |-
-            cd {{ROUTE}}
-            .\gradlew clean build -x test --parallel
+        run: .\gradlew clean build -x test --parallel
       - name: Test
-        run: |-
-            cd {{ROUTE}}
-            gradle clean build --parallel
+        run: .\gradlew clean build --parallel
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
