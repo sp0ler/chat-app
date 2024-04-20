@@ -1,5 +1,5 @@
 # read the workflow template
-WORKFLOW_TEMPLATE=$(cat .github/workflow-template.yaml)
+WORKFLOW_TEMPLATE=$(cat .github/workflow/workflow-template.yaml)
 dir_array=("message-service")
 
 # iterate each route in routes directory
