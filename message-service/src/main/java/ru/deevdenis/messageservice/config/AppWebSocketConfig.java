@@ -38,6 +38,7 @@ public class AppWebSocketConfig {
         return Sinks.many().replay().all();
     }
 
+    @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
