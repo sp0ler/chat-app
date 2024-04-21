@@ -5,16 +5,16 @@ on:
     branches:
       - '*'
     paths:
-      - session-service/**
+      - 'session-service/**'
       - '*.yaml'
       - .github/workflows/session-service-pull-request.yaml
   push:
     branches:
       - master
     paths:
-      - session-service/**
+      - 'session-service/**'
       - '*.yaml'
-      - .github/workflows/session-service-pull-request.yaml
+      - '.github/workflows/session-service-pull-request.yaml'
       
 
 jobs:
@@ -29,9 +29,9 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Build
-        run: .\gradlew clean build -x test --parallel
+        run: ./gradlew clean build -x test --parallel
       - name: Test
-        run: .\gradlew clean build --parallel
+        run: ./gradlew clean build --parallel
       - uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

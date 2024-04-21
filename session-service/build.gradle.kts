@@ -27,6 +27,7 @@ jacoco {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.boot:spring-boot-docker-compose")
 	implementation("org.apache.commons:commons-lang3")
 	implementation("javax.annotation:javax.annotation-api:1.3.2")
 	implementation("org.openapitools:jackson-databind-nullable:0.2.6")
@@ -48,20 +49,4 @@ tasks.test {
 }
 tasks.jacocoTestReport {
 	dependsOn(tasks.test) // tests are required to run before generating the report
-}
-
-sourceSets {
-	getByName("main") {
-		java {
-			srcDir("$generatedSourcesDir/src/main/java")
-		}
-	}
-}
-
-tasks {
-	val openApiGenerate by getting
-
-	val compileJava by getting {
-		dependsOn(openApiGenerate)
-	}
 }
