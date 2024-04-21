@@ -5,14 +5,14 @@ on:
     branches:
       - '*'
     paths:
-      - message-service/**
+      - 'message-service/**'
       - '*.yaml'
       - .github/workflows/message-service-pull-request.yaml
   push:
     branches:
       - master
     paths:
-      - message-service/**
+      - 'message-service/**'
       - '*.yaml'
       - .github/workflows/message-service-pull-request.yaml
       
@@ -29,9 +29,9 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
       - name: Build
-        run: .\gradlew clean build -x test --parallel
+        run: ./gradlew clean build -x test --parallel
       - name: Test
-        run: .\gradlew clean build --parallel
+        run: ./gradlew clean build --parallel
       - uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

@@ -5,23 +5,29 @@ info:
   title: Simple API overview
 
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8081
 
 paths:
-  /test:
-    get:
-      summary: test
-      operationId: testApi
-      tags:
-        - test
-      parameters:
-          - name: limit
-            in: query
-            required: true
+  /session:
+    post:
+      summary: saveSession
+      operationId: saveSession
+      requestBody:
+        required: true
+        content:
+          application/json:
             schema:
-              type: integer
-              maximum: 100
-              format: int32
+              $ref: '#/components/schemas/SessionBody'
       responses:
         '200':
           description: ok
+
+components:
+  schemas:
+    SessionBody:
+      type: object
+      description: Модель сессии
+      properties:
+        id:
+          description: Идентификатор
+          type: string

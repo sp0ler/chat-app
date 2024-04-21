@@ -1,11 +1,13 @@
 package ru.deevdenis.messageservice.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.openapi.java.invoker.ApiClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.reactive.HandlerMapping;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import reactor.core.publisher.Sinks;
@@ -41,5 +43,11 @@ public class AppWebSocketConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
+    }
+
+    public Object webClientSessionService() {
+        ApiClient apiClient = new ApiClient();
+        WebClient webClient = apiClient.getWebClient();
+        return webClient;
     }
 }
