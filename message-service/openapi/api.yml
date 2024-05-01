@@ -21,6 +21,38 @@ paths:
       responses:
         '200':
           description: ok
+    get:
+      summary: getSession
+      operationId: getSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionBody'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionBody'
+    delete:
+      summary: deleteSession
+      operationId: deleteSession
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionBody'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionBody'
 
 components:
   schemas:
@@ -28,6 +60,11 @@ components:
       type: object
       description: Модель сессии
       properties:
-        id:
+        senderLoginId:
           description: Идентификатор
+          type: string
+        recipientLoginId:
+          description: Идентификатор
+          type: string
+        text:
           type: string

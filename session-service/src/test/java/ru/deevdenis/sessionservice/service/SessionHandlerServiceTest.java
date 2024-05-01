@@ -1,15 +1,15 @@
 package ru.deevdenis.sessionservice.service;
 
 import org.junit.jupiter.api.Test;
+import org.openapi.java.model.SessionBody;
 import org.springframework.http.MediaType;
 import ru.deevdenis.sessionservice.AbstractTest;
-import ru.deevdenis.sessionservice.model.SessionBody;
 
 class SessionHandlerServiceTest extends AbstractTest {
 
     @Test
     void postSessionSuccessTest() {
-        SessionBody sessionBody = new SessionBody(SENDER_LOGIN_ID, "",  "text");
+        SessionBody sessionBody = new SessionBody().id(SENDER_LOGIN_ID).text("text");
         webClient
                 .post()
                 .uri(PATH)

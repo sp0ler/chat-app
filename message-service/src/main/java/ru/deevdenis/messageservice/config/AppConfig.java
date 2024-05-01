@@ -1,18 +1,20 @@
-package ru.deevdenis.sessionservice.configuration;
+package ru.deevdenis.messageservice.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.handler.timeout.WriteTimeoutHandler;
 import lombok.SneakyThrows;
+import org.openapi.java.api.DefaultApi;
+import org.openapi.java.invoker.ApiClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 import reactor.netty.resources.ConnectionProvider;
 
@@ -28,28 +30,28 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-@Import(RouteConfig.class)
+@Import({AppWebSocketConfig.class, RouteConfig.class})
 public class AppConfig {
 
     @Bean
-    @Scope("prototype")
-    public HttpClient httpClient (
+    public DefaultApi sessionServiceApi(
             @Value("${webclient.ssl.enabled}") boolean isSslEnabled,
+            @Value("${session-service.url}") String baseUrl,
             @Value("${session-service.timeout}") int timeout,
             SslContext createSslContextWithTruststore
     ) {
         HttpClient httpClient = HttpClient.create(
-                        ConnectionProvider.builder("custom")
-                                .maxIdleTime(Duration.ofSeconds(120))
-                                .build()
+                ConnectionProvider.builder("custom")
+                        .maxIdleTime(Duration.ofSeconds(120))
+                        .build()
                 )
                 .option(ChannelOption.SO_KEEPALIVE, true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, timeout)
                 .responseTimeout(Duration.ofMillis(timeout))
                 .doOnConnected(conn ->
                         conn
-                                .addHandlerLast(new ReadTimeoutHandler(timeout, TimeUnit.MILLISECONDS))
-                                .addHandlerLast(new WriteTimeoutHandler(timeout, TimeUnit.MILLISECONDS))
+                            .addHandlerLast(new ReadTimeoutHandler(timeout, TimeUnit.MILLISECONDS))
+                            .addHandlerLast(new WriteTimeoutHandler(timeout, TimeUnit.MILLISECONDS))
                 );
 
         if (isSslEnabled) {
@@ -71,7 +73,14 @@ public class AppConfig {
             );
         }
 
-        return httpClient;
+        WebClient webClient = WebClient.builder()
+                .baseUrl(baseUrl)
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+
+        ApiClient apiClient = new ApiClient(webClient, baseUrl);
+
+        return new DefaultApi(apiClient);
     }
 
     @Bean
@@ -102,10 +111,5 @@ public class AppConfig {
                 .keyStoreType("PKCS12")
                 .protocols("TLSv1","TLSv1.2","TLSv1.1","TLSv1.3","SSLv3")
                 .build();
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
     }
 }
