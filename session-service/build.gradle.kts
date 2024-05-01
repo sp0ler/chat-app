@@ -36,6 +36,9 @@ dependencies {
 	implementation("io.r2dbc:r2dbc-pool")
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("org.mapstruct:mapstruct:1.5.5.Final")
+	implementation("org.liquibase:liquibase-core")
+	implementation("org.springframework:spring-jdbc")
+	implementation("org.postgresql:postgresql")
 
 	compileOnly("org.projectlombok:lombok")
 
