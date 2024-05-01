@@ -1,32 +1,107 @@
 version: '3'
 
 services:
+    gateway-nginx:
+        image: nginx:latest
+        ports:
+          - 443:443
+          - 10000:10000
+          - 10001:10001
+          - 10002:10002
+          - 10003:10003
+          - 10004:10004
+          - 10005:10005
+          - 10006:10006
+          - 10007:10007
+        volumes:
+          - ../nginx/gateway-nginx/nginx.conf:/etc/nginx/nginx.conf
+          - ../nginx/nginx-selfsigned.crt:/etc/nginx/nginx-selfsigned.crt
+          - ../nginx/nginx-selfsigned.key:/etc/nginx/nginx-selfsigned.key
+          - ../nginx/dhparam.pem:/etc/nginx/dhparam.pem
+        depends_on:
+            - message-service
+        deploy:
+            resources:
+                limits:
+                  cpus: '0.5'
+                  memory: 128M
+                reservations:
+                  cpus: '0.25'
+                  memory: 128M
+        networks:
+            monitoring:
+                aliases:
+                    - gateway-nginx
     session-service:
         build: ../session-service
         image: session-service:0.0.1
         ports:
-            - "8081:8080"
+            - "9443:9443"
+        environment:
+            - webclient.ssl.enabled=true
+            - server.ssl.enabled=true
         restart: on-failure
+        depends_on:
+            - postgres
         deploy:
             resources:
                 limits:
-                  cpus: '0.5'
+                  cpus: '1'
                   memory: 512M
                 reservations:
                   cpus: '0.25'
                   memory: 128M
+        networks:
+            monitoring:
+                aliases:
+                    - session-service
     message-service:
         build: ../message-service
         image: message-service:0.0.1
         ports:
-            - "8080:8080"
+            - "8443-8444:8443"
+        environment:
+            - webclient.ssl.enabled=true
+            - server.ssl.enabled=true
+            - session-service.url=https://host.docker.internal:9443
         restart: on-failure
         deploy:
             resources:
                 limits:
-                  cpus: '0.5'
+                  cpus: '1'
                   memory: 512M
                 reservations:
                   cpus: '0.25'
                   memory: 128M
-    
+            mode: replicated
+            replicas: 2
+        networks:
+            monitoring:
+                aliases:
+                    - message-service
+    postgres:
+        image: postgres
+        environment:
+            POSTGRES_USER: denis
+            POSTGRES_PASSWORD: password
+            PGDATA: /data/postgres
+            POSTGRES_DB: session-service
+        volumes:
+            - postgres:/data/postgres
+        ports:
+            - "5432:5432"
+        restart: on-failure
+        deploy:
+            resources:
+                limits:
+                  cpus: '1'
+                  memory: 512M
+        networks:
+            monitoring:
+                aliases:
+                    - postgres
+
+networks:
+    monitoring:
+volumes:
+    postgres:

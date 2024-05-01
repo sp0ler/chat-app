@@ -20,12 +20,8 @@ import java.util.Map;
 @Configuration
 public class AppWebSocketConfig {
 
-    @Autowired
-    @Lazy
-    private MessageHandler messageHandler;
-
     @Bean
-    public HandlerMapping webSocketHandlerMapping() {
+    public HandlerMapping webSocketHandlerMapping(MessageHandler messageHandler) {
         Map<String, WebSocketHandler> map = new HashMap<>();
         map.put("/ws", messageHandler::handle);
 
@@ -43,11 +39,5 @@ public class AppWebSocketConfig {
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();
-    }
-
-    public Object webClientSessionService() {
-        ApiClient apiClient = new ApiClient();
-        WebClient webClient = apiClient.getWebClient();
-        return webClient;
     }
 }

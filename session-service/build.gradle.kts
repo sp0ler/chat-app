@@ -32,9 +32,16 @@ dependencies {
 	implementation("javax.annotation:javax.annotation-api:1.3.2")
 	implementation("org.openapitools:jackson-databind-nullable:0.2.6")
 	implementation("com.google.code.findbugs:jsr305:3.0.0")
+	implementation("io.r2dbc:r2dbc-postgresql:0.8.13.RELEASE")
+	implementation("io.r2dbc:r2dbc-pool")
+	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+	implementation("org.mapstruct:mapstruct:1.5.5.Final")
 
 	compileOnly("org.projectlombok:lombok")
+
 	annotationProcessor("org.projectlombok:lombok")
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+	annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("io.projectreactor:reactor-test")
@@ -49,4 +56,44 @@ tasks.test {
 }
 tasks.jacocoTestReport {
 	dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+sourceSets {
+	getByName("main") {
+		java {
+			srcDir("$generatedSourcesDir/src/main/java")
+		}
+	}
+}
+
+tasks {
+	val openApiGenerate by getting
+
+	val compileJava by getting {
+		dependsOn(openApiGenerate)
+	}
+}
+
+openApiGenerate {
+	generatorName.set("java")
+
+	inputSpec.set("$rootDir/openapi/api.yml")
+	outputDir.set(generatedSourcesDir)
+
+	apiPackage.set("org.openapi.java.api")
+	invokerPackage.set("org.openapi.java.invoker")
+	modelPackage.set("org.openapi.java.model")
+
+	templateDir.set("$rootDir/openapi/templates")
+
+	configOptions.set(
+		mapOf(
+			"interfaceOnly" to "false",
+			"useTags" to "true",
+			"delegatePatten" to "true",
+			"serializableModel" to "true",
+			"dateLibrary" to "java8",
+			"library" to "webclient"
+		)
+	)
 }

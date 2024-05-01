@@ -1,0 +1,38 @@
+openapi: "3.0.0"
+
+info:
+  version: 1.0.0
+  title: Simple API overview
+
+servers:
+  - url: http://localhost:8081
+
+paths:
+  /send-message:
+    post:
+      summary: sendMessage
+      operationId: sendMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionBody'
+      responses:
+        '200':
+          description: ok
+
+components:
+  schemas:
+    SessionBody:
+      type: object
+      description: Модель сессии
+      properties:
+        senderLoginId:
+          description: Идентификатор
+          type: string
+        recipientLoginId:
+          description: Идентификатор
+          type: string
+        text:
+          type: string

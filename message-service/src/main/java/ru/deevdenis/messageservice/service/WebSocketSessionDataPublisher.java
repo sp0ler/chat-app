@@ -20,8 +20,6 @@ public class WebSocketSessionDataPublisher implements Consumer<Object> {
     @Override
     public void accept(Object o) {
         if (o instanceof WSMessage wsMessage) {
-            log.info("Message to be sent for id %s".formatted(wsMessage.recipientLoginId()));
-
             if (loginId.equalsIgnoreCase(wsMessage.senderLoginId())) {
                 session.send(Mono.just(session.textMessage(wsMessage.message()))).subscribe();
             }
