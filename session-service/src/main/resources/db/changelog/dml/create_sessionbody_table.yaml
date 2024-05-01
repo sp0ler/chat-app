@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: Create sessionBody table
+      author: Deev Denis
+      changes:
+        - createTable:
+            tableName: session-body
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: senderLoginId
+                  type: varchar(100)
+              - column:
+                  name: recipientLoginId
+                  type: varchar(100)
+              - column:
+                  name: baseUrl
+                  type: varchar(50)
+              - column:
+                  name: createdTime
+                  type: timestamp
